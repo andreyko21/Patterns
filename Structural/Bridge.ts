@@ -1,65 +1,50 @@
-interface ICarCreate {
-    addBody(): void;
-	addWheals(): void;
-}
+class Remote {
+    protected device: IDevice;
 
-class BMW implements ICarCreate {
-	addBody(): void {
-        console.log('add body BMW');
+    constructor(device: IDevice) {
+        this.device = device;
     }
-	addWheals(): void {
-		console.log(`add wheals BMW`);
-	}
-}
 
-class Audi implements ICarCreate {
-	addBody(): void {
-        console.log('add body Audi');
-    }
-	addWheals(): void {
-		console.log(`add wheals Audi`);
-	}
-}
-
-class CreateCar {
-	constructor (private car: ICarCreate) {}
-
-	create() {
-		this.car.addBody();
-		this.car.addWheals();
-	}
-}
-
-class RedCar extends CreateCar {
-	constructor(car: ICarCreate) {
-        super(car);
-    }
-    
-    color(){
-        console.log('add color red');
-    }
-    create(): void {
-        super.create();
-        this.color();
+    public operation(): string {
+        const result = this.device.operationImplementation();
+        return `Remote operation with:\n${result}`;
     }
 }
 
-class BlackCar extends CreateCar {
-	constructor(car: ICarCreate) {
-        super(car);
-    }
-    
-    color(){
-        console.log('add color black');
-    }
-    create(): void {
-        super.create();
-        this.color();
+class AdvancedRemote extends Remote {
+    public operation(): string {
+        const result = this.device.operationImplementation();
+        return `AdvancedRemote operation with:\n${result}`;
     }
 }
 
-const bmw = new RedCar(new BMW())
-bmw.create();
+interface IDevice {
+    operationImplementation(): string;
+}
 
-const audi = new BlackCar(new Audi());
-audi.create();
+class Radio implements IDevice {
+    public operationImplementation(): string {
+        return 'Radio Here\'s the result';
+    }
+}
+
+class TV implements IDevice {
+    public operationImplementation(): string {
+        return 'TV Here\'s the result';
+    }
+}
+
+function clientCode(abstraction: Remote) {
+    console.log(abstraction.operation());
+}
+
+let implementation = new Radio();
+let abstraction = new Remote(implementation);
+clientCode(abstraction);
+
+console.log('');
+
+implementation = new TV();
+abstraction = new AdvancedRemote(implementation);
+clientCode(abstraction);
+

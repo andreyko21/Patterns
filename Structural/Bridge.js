@@ -13,67 +13,50 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var BMW = /** @class */ (function () {
-    function BMW() {
+var Remote = /** @class */ (function () {
+    function Remote(device) {
+        this.device = device;
     }
-    BMW.prototype.addBody = function () {
-        console.log('add body BMW');
+    Remote.prototype.operation = function () {
+        var result = this.device.operationImplementation();
+        return "Remote operation with:\n".concat(result);
     };
-    BMW.prototype.addWheals = function () {
-        console.log("add wheals BMW");
-    };
-    return BMW;
+    return Remote;
 }());
-var Audi = /** @class */ (function () {
-    function Audi() {
+var AdvancedRemote = /** @class */ (function (_super) {
+    __extends(AdvancedRemote, _super);
+    function AdvancedRemote() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Audi.prototype.addBody = function () {
-        console.log('add body Audi');
+    AdvancedRemote.prototype.operation = function () {
+        var result = this.device.operationImplementation();
+        return "AdvancedRemote operation with:\n".concat(result);
     };
-    Audi.prototype.addWheals = function () {
-        console.log("add wheals Audi");
+    return AdvancedRemote;
+}(Remote));
+var Radio = /** @class */ (function () {
+    function Radio() {
+    }
+    Radio.prototype.operationImplementation = function () {
+        return 'Radio Here\'s the result on the platform';
     };
-    return Audi;
+    return Radio;
 }());
-var CreateCar = /** @class */ (function () {
-    function CreateCar(car) {
-        this.car = car;
+var TV = /** @class */ (function () {
+    function TV() {
     }
-    CreateCar.prototype.create = function () {
-        this.car.addBody();
-        this.car.addWheals();
+    TV.prototype.operationImplementation = function () {
+        return 'TV Here\'s the result on the platform';
     };
-    return CreateCar;
+    return TV;
 }());
-var RedCar = /** @class */ (function (_super) {
-    __extends(RedCar, _super);
-    function RedCar(car) {
-        return _super.call(this, car) || this;
-    }
-    RedCar.prototype.color = function () {
-        console.log('add color red');
-    };
-    RedCar.prototype.create = function () {
-        _super.prototype.create.call(this);
-        this.color();
-    };
-    return RedCar;
-}(CreateCar));
-var BlackCar = /** @class */ (function (_super) {
-    __extends(BlackCar, _super);
-    function BlackCar(car) {
-        return _super.call(this, car) || this;
-    }
-    BlackCar.prototype.color = function () {
-        console.log('add color black');
-    };
-    BlackCar.prototype.create = function () {
-        _super.prototype.create.call(this);
-        this.color();
-    };
-    return BlackCar;
-}(CreateCar));
-var bmw = new RedCar(new BMW());
-bmw.create();
-var audi = new BlackCar(new Audi());
-audi.create();
+function clientCode(abstraction) {
+    console.log(abstraction.operation());
+}
+var implementation = new Radio();
+var abstraction = new Remote(implementation);
+clientCode(abstraction);
+console.log('');
+implementation = new TV();
+abstraction = new AdvancedRemote(implementation);
+clientCode(abstraction);

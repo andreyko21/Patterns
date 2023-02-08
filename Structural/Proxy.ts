@@ -1,4 +1,9 @@
-class WebAccess {
+interface IAccess{
+	signIn(login?, password?);
+	logout();
+}
+
+class WebAccess implements IAccess{
 	signIn() {
 		console.log('Open user page')
 	}
@@ -8,9 +13,9 @@ class WebAccess {
 	}
 };
 
-class Verification {
-    page: any;
-	constructor(page: any) {
+class Verification implements IAccess{
+    page: WebAccess;
+	constructor(page: WebAccess) {
 		this.page = page;
 	}
 
