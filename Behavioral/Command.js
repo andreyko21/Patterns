@@ -1,51 +1,64 @@
-var User = /** @class */ (function () {
-    function User(command) {
-        this.command = command;
-    }
-    User.prototype.execute = function () {
-        this.command.execute();
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
     };
-    return User;
-}());
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var PC = /** @class */ (function () {
     function PC() {
         this.state = false;
     }
-    PC.prototype.on = function () {
-        this.state = true;
-    };
-    PC.prototype.off = function () {
-        this.state = false;
-    };
     return PC;
 }());
-var OnCommand = /** @class */ (function () {
-    function OnCommand(pc) {
+var Command = /** @class */ (function () {
+    function Command(pc) {
         this.pc = pc;
+    }
+    return Command;
+}());
+var OnCommand = /** @class */ (function (_super) {
+    __extends(OnCommand, _super);
+    function OnCommand(pc) {
+        return _super.call(this, pc) || this;
     }
     OnCommand.prototype.execute = function () {
-        this.pc.on();
+        this.pc.state = true;
     };
     return OnCommand;
-}());
-var OffCommand = /** @class */ (function () {
+}(Command));
+var OffCommand = /** @class */ (function (_super) {
+    __extends(OffCommand, _super);
     function OffCommand(pc) {
-        this.pc = pc;
+        return _super.call(this, pc) || this;
     }
     OffCommand.prototype.execute = function () {
-        this.pc.off();
+        this.pc.state = false;
     };
     return OffCommand;
+}(Command));
+var User = /** @class */ (function () {
+    function User() {
+        this.pc = new PC();
+        this.onCommand = new OnCommand(this.pc);
+        this.offCommand = new OffCommand(this.pc);
+    }
+    User.prototype.getPCStatus = function () {
+        return this.pc.state;
+    };
+    return User;
 }());
-function Change(command) {
-    var user = new User(command);
-    user.execute();
-}
-var pc = new PC();
-var onStartCommand = new OnCommand(pc);
-var offStartCommand = new OffCommand(pc);
-console.log(pc);
-Change(onStartCommand);
-console.log(pc);
-Change(offStartCommand);
-console.log(pc);
+var user = new User();
+console.log(user.getPCStatus());
+user.onCommand.execute();
+console.log(user.getPCStatus());
+user.offCommand.execute();
+console.log(user.getPCStatus());

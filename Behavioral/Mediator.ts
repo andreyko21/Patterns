@@ -1,102 +1,83 @@
-class OfficialDealer{
-    customers: any;
-    sellers: any;
-    constructor(){
-        this.customers = [];
-        this.sellers = [];
+interface IMediator {
+    notify(sender: object): void;
+ }
+ 
+ class ConcreteMediator implements IMediator {
+    private componentA: ComponentA;
+    private componentB: ComponentB;
+    private componentC: ComponentC;
+ 
+    constructor(cA: ComponentA, cB: ComponentB, cC: ComponentC) {
+        this.componentA = cA;
+        this.componentA.setMediator(this);
+        this.componentB = cB;
+        this.componentB.setMediator(this);
+        this.componentC = cC;
+        this.componentC.setMediator(this);
     }
 
-    orderAuto(customer: Customer, auto: string, info: string, seller: Seller){
-        const nameCust = customer.getName();
-        const nameSeller = seller.getName();
-        console.log(`Order name: ${nameCust}. Order auto is ${auto}. Seller name: ${nameSeller}`);
-        console.log(`Additional info: ${info}`);
-        this.addToCustomersList(nameCust);
-        this.addToSellersList(nameSeller);
-        seller.setCustomer(customer.name);
-        customer.setSellers(seller.name);
+    public notify(sender: object): void {
+        if (sender == cA) {
+            console.log('Mediator reacts on A');
+            this.componentA.operationA();
+        }
+        if (sender == cB) {
+            console.log('Mediator reacts on B');
+            this.componentB.operationB();
+        }
+
+        if (sender == cC) {
+            console.log('Mediator reacts on C');
+            this.componentC.operationC();
+        }
+    }
+ }
+  
+ class BaseComponent {
+    protected mediator: IMediator;
+
+    constructor(mediator?: IMediator) {
+        this.mediator = mediator!;
     }
 
-    addToCustomersList(name: string){
-        this.customers.push(name);
-    }
-
-    addToSellersList(name: string){
-        this.sellers.push(name);
-    }
-
-    getCustomerList(){
-        return this.customers;
-    }
-
-    getSellerList(){
-        return this.sellers;
-    }
-}
-
-class Customer {
-    dealerMediator: OfficialDealer;
-    name: string;
-    sellers: string[] = [];
-    constructor(name: string, dealerMediator: OfficialDealer){
-        this.name = name;
-        this.dealerMediator = dealerMediator;
-    }
-
-    setSellers(name: string){
-        this.sellers?.push(name);
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    getSellers(){
-        return this.sellers;
-    }
-
-    makeOrder(auto: string, info: string, seller: Seller){
-        this.dealerMediator.orderAuto(this, auto, info, seller);
+    public setMediator(mediator: IMediator): void {
+        this.mediator = mediator;
     }
 }
 
-class Seller {
-    dealerMediator: OfficialDealer;
-    customers: string[] = [];
-    name: any;
-    constructor(name: string, dealerMediator: OfficialDealer){
-        this.name = name;
-        this.dealerMediator = dealerMediator;
-    }
-
-    setCustomer(name: string){
-        this.customers.push(name);
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    getCustomers() {
-        return this.customers;
-    }
-
-    makeSell(auto: string, info: string, customer: Customer){
-        this.dealerMediator.orderAuto(customer, auto, info, this);
+class ComponentA extends BaseComponent {
+    public operationA(): void {
+        console.log('operationA');
     }
 }
+ 
+class ComponentB extends BaseComponent {
+    public operationB(): void {
+        console.log('operationB');
+    }
+}
+ 
+class ComponentC extends BaseComponent {
+    public operationC(): void {
+        console.log('operationC');
+    }
+}
+ 
+const cA = new ComponentA();
+const cB = new ComponentB();
+const cC = new ComponentC();
+const mediator = new ConcreteMediator(cA, cB, cC);
 
-const mediator = new OfficialDealer();
+console.log('operation A.');
+mediator.notify(cA);
+console.log('');
 
-const yauhen = new Customer('Yauhen',mediator);
-const valera = new Customer('Valera',mediator);
-const andrey = new Seller('Andrey',mediator);
-const vitaliy = new Seller('Vitaliy',mediator);
-
-andrey.makeSell('Tesla','With autopilot!',valera);
-andrey.makeSell('Audi', 'With parktronik!',yauhen);
-vitaliy.makeSell('Audi2', 'With parktronik!',valera);
+console.log('operation B.');
+mediator.notify(cB);
 
 
-console.log(andrey.getCustomers());
-console.log(yauhen.getSellers());
+
+console.log('');
+console.log('operation C.');
+mediator.notify(cC);
+

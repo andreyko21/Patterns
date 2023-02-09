@@ -1,53 +1,51 @@
-class User {
-    constructor(protected command){}
-    execute() {
-        this.command.execute();
-    }
-}
-
-class PC{
+class PC {
     state: boolean; 
     constructor(){
         this.state = false;
     }
-
-    on(){
-        this.state = true;
+}
+abstract class Command {
+    pc: PC;
+    constructor(pc: PC) {
+        this.pc = pc;
     }
-
-    off() {
-         this.state = false;
+    abstract execute(...args: any[]): void;
+}
+class OnCommand extends Command {
+    constructor(pc: PC) {
+        super(pc);
+    }
+    execute() {
+        this.pc.state = true;
+    }
+}
+class OffCommand extends Command {
+    constructor(pc: PC) {
+        super(pc);
+    }
+    execute() {
+        this.pc.state = false;
     }
 }
 
-class OnCommand{
-    constructor(protected pc: any){}
-
-    execute(){
-        this.pc.on();
+class User {
+    pc: PC;
+    onCommand: OnCommand;
+    offCommand: OffCommand;
+    constructor() {
+        this.pc = new PC();
+        this.onCommand = new OnCommand(this.pc);
+        this.offCommand = new OffCommand(this.pc);
+    }
+    getPCStatus() {
+        return this.pc.state;
     }
 }
 
-class OffCommand{
-    constructor(protected pc: any){}
-
-    execute(){
-        this.pc.off();
-    }
-}
-
-function Change(command: object){
-        const user = new User(command);
-        user.execute();
-}
-
-const pc = new PC();
-const onStartCommand = new OnCommand(pc);
-const offStartCommand = new OffCommand(pc);
-console.log(pc);
-Change(onStartCommand);
-console.log(pc);
-Change(offStartCommand);
-console.log(pc);
-
+const user = new User();
+console.log(user.getPCStatus());
+user.onCommand.execute();
+console.log(user.getPCStatus());
+user.offCommand.execute();
+console.log(user.getPCStatus());
 

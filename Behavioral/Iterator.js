@@ -25,17 +25,33 @@ var ObjIterator = /** @class */ (function () {
     };
     return ObjIterator;
 }());
+var ArrCollection = /** @class */ (function () {
+    function ArrCollection(c) {
+        this.collection = [];
+        this.collection = c;
+    }
+    ArrCollection.prototype.createIterator = function () {
+        return new ArrIterator(this.collection);
+    };
+    return ArrCollection;
+}());
+var ObjCollection = /** @class */ (function () {
+    function ObjCollection(c) {
+        this.collection = c;
+    }
+    ObjCollection.prototype.createIterator = function () {
+        return new ObjIterator(this.collection);
+    };
+    return ObjCollection;
+}());
 var autos = {
     audi: { model: 'Audi', color: 'black', price: '20000' },
     bmw: { model: 'BMW', color: 'white', price: '30000' },
     tesla: { model: 'Tesla', color: 'gray', price: '40000' }
 };
-var mass = ['audi', 'bmw', 'mercedes', 'tesla'];
-var collection = new ArrIterator(mass);
-var collection2 = new ObjIterator(autos);
-while (collection.hasNext()) {
-    console.log(collection.next());
-}
-while (collection2.hasNext()) {
-    console.log(collection2.next());
+var concreteCollection = new ArrCollection([1, 2, 5, 8]);
+var concreteCollection2 = new ObjCollection(autos);
+var iterator = concreteCollection2.createIterator();
+while (iterator.hasNext()) {
+    console.log(iterator.next());
 }

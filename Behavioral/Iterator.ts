@@ -1,6 +1,4 @@
-interface IIterator{
-    index: number;
-    elements: any[];
+interface IIterator {
     next(): any;
     hasNext(): boolean;
 }
@@ -39,23 +37,40 @@ class ObjIterator implements IIterator{
     }
 }
 
+interface IterableCollection {
+    createIterator(): IIterator;
+} 
+
+class ArrCollection implements IterableCollection {
+    collection: Number[] = [];
+    constructor(c: Number[]) {
+        this.collection = c;
+    }
+    createIterator(): IIterator {
+        return new ArrIterator(this.collection);
+    }
+}
+
+class ObjCollection implements IterableCollection {
+    collection: any;
+    constructor(c: any) {
+        this.collection = c;
+    }
+    createIterator(): IIterator {
+        return new ObjIterator(this.collection);
+    }
+}
+
 const autos = {
     audi: { model: 'Audi', color: 'black', price: '20000'},
     bmw: { model: 'BMW', color: 'white', price: '30000'},
     tesla: { model: 'Tesla', color: 'gray', price: '40000'},
 }
 
-const mass = ['audi','bmw','mercedes','tesla'];
+const concreteCollection = new ArrCollection([1, 2, 5, 8]);
+const concreteCollection2 = new ObjCollection(autos);
+const iterator = concreteCollection2.createIterator();
 
-const collection = new ArrIterator(mass);  
-const collection2 = new ObjIterator(autos);
-
-while(collection.hasNext()){
-    console.log(collection.next());
+while (iterator.hasNext()) {
+    console.log(iterator.next());
 }
-
-while(collection2.hasNext()){
-    console.log(collection2.next());
-}
-
-

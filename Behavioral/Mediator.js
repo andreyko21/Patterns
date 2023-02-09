@@ -1,80 +1,91 @@
-var OfficialDealer = /** @class */ (function () {
-    function OfficialDealer() {
-        this.customers = [];
-        this.sellers = [];
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var ConcreteMediator = /** @class */ (function () {
+    function ConcreteMediator(cA, cB, cC) {
+        this.componentA = cA;
+        this.componentA.setMediator(this);
+        this.componentB = cB;
+        this.componentB.setMediator(this);
+        this.componentC = cC;
+        this.componentC.setMediator(this);
     }
-    OfficialDealer.prototype.orderAuto = function (customer, auto, info, seller) {
-        var nameCust = customer.getName();
-        var nameSeller = seller.getName();
-        console.log("Order name: ".concat(nameCust, ". Order auto is ").concat(auto, ". Seller name: ").concat(nameSeller));
-        console.log("Additional info: ".concat(info));
-        this.addToCustomersList(nameCust);
-        this.addToSellersList(nameSeller);
-        seller.setCustomer(customer.name);
-        customer.setSellers(seller.name);
+    ConcreteMediator.prototype.notify = function (sender) {
+        if (sender == cA) {
+            console.log('Mediator reacts on A');
+            this.componentA.operationA();
+        }
+        if (sender == cB) {
+            console.log('Mediator reacts on B');
+            this.componentB.operationB();
+        }
+        if (sender == cC) {
+            console.log('Mediator reacts on C');
+            this.componentC.operationC();
+        }
     };
-    OfficialDealer.prototype.addToCustomersList = function (name) {
-        this.customers.push(name);
-    };
-    OfficialDealer.prototype.addToSellersList = function (name) {
-        this.sellers.push(name);
-    };
-    OfficialDealer.prototype.getCustomerList = function () {
-        return this.customers;
-    };
-    OfficialDealer.prototype.getSellerList = function () {
-        return this.sellers;
-    };
-    return OfficialDealer;
+    return ConcreteMediator;
 }());
-var Customer = /** @class */ (function () {
-    function Customer(name, dealerMediator) {
-        this.sellers = [];
-        this.name = name;
-        this.dealerMediator = dealerMediator;
+var BaseComponent = /** @class */ (function () {
+    function BaseComponent(mediator) {
+        this.mediator = mediator;
     }
-    Customer.prototype.setSellers = function (name) {
-        var _a;
-        (_a = this.sellers) === null || _a === void 0 ? void 0 : _a.push(name);
+    BaseComponent.prototype.setMediator = function (mediator) {
+        this.mediator = mediator;
     };
-    Customer.prototype.getName = function () {
-        return this.name;
-    };
-    Customer.prototype.getSellers = function () {
-        return this.sellers;
-    };
-    Customer.prototype.makeOrder = function (auto, info, seller) {
-        this.dealerMediator.orderAuto(this, auto, info, seller);
-    };
-    return Customer;
+    return BaseComponent;
 }());
-var Seller = /** @class */ (function () {
-    function Seller(name, dealerMediator) {
-        this.customers = [];
-        this.name = name;
-        this.dealerMediator = dealerMediator;
+var ComponentA = /** @class */ (function (_super) {
+    __extends(ComponentA, _super);
+    function ComponentA() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Seller.prototype.setCustomer = function (name) {
-        this.customers.push(name);
+    ComponentA.prototype.operationA = function () {
+        console.log('operationA');
     };
-    Seller.prototype.getName = function () {
-        return this.name;
+    return ComponentA;
+}(BaseComponent));
+var ComponentB = /** @class */ (function (_super) {
+    __extends(ComponentB, _super);
+    function ComponentB() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ComponentB.prototype.operationB = function () {
+        console.log('operationB');
     };
-    Seller.prototype.getCustomers = function () {
-        return this.customers;
+    return ComponentB;
+}(BaseComponent));
+var ComponentC = /** @class */ (function (_super) {
+    __extends(ComponentC, _super);
+    function ComponentC() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ComponentC.prototype.operationC = function () {
+        console.log('operationC');
     };
-    Seller.prototype.makeSell = function (auto, info, customer) {
-        this.dealerMediator.orderAuto(customer, auto, info, this);
-    };
-    return Seller;
-}());
-var mediator = new OfficialDealer();
-var yauhen = new Customer('Yauhen', mediator);
-var valera = new Customer('Valera', mediator);
-var andrey = new Seller('Andrey', mediator);
-var vitaliy = new Seller('Vitaliy', mediator);
-andrey.makeSell('Tesla', 'With autopilot!', valera);
-andrey.makeSell('Audi', 'With parktronik!', yauhen);
-vitaliy.makeSell('Audi2', 'With parktronik!', valera);
-console.log(andrey.getCustomers());
-console.log(valera.getSellers());
+    return ComponentC;
+}(BaseComponent));
+var cA = new ComponentA();
+var cB = new ComponentB();
+var cC = new ComponentC();
+var mediator = new ConcreteMediator(cA, cB, cC);
+console.log('operation A.');
+mediator.notify(cA);
+console.log('');
+console.log('operation B.');
+mediator.notify(cB);
+console.log('');
+console.log('operation C.');
+mediator.notify(cC);
